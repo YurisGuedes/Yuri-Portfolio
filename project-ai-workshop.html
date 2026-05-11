@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Workshop — Yuri Guedes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+@import url('https://fonts.cdnfonts.com/css/alte-haas-grotesk');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --onyx:#0A0A0A;--onyx2:#0f0f0f;--onyx3:#141414;
+  --slate:#536878;--slate2:#3d5060;--slate3:#6a8090;
+  --alabaster:#E5E4E2;--alaba2:#c8c7c5;--muted:#4a5a64;
+  --faint:rgba(83,104,120,0.12);--border:rgba(83,104,120,0.14);--border2:rgba(83,104,120,0.28);
+  --font:'Alte Haas Grotesk','Arial Black',sans-serif;--mono:'DM Mono',monospace;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--onyx);color:var(--alabaster);font-family:var(--font);overflow-x:hidden;cursor:none;}
+
+#cur{width:8px;height:8px;background:var(--alabaster);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,opacity .2s;mix-blend-mode:difference;}
+#cur.big{width:52px;height:52px;opacity:.5;}
+#cur-trail{width:52px;height:52px;border:1px solid rgba(83,104,120,.3);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
+
+.aura{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(90px);}
+.aura-1{width:700px;height:700px;background:radial-gradient(circle at center,rgba(83,104,120,.38) 0%,rgba(40,60,75,.18) 45%,transparent 70%);top:-200px;left:-150px;animation:auraIn 2s forwards .2s,auraFloat1 18s ease-in-out infinite 2.2s;opacity:0;}
+.aura-2{width:500px;height:500px;background:radial-gradient(circle at center,rgba(83,104,120,.28) 0%,rgba(30,45,58,.12) 50%,transparent 70%);bottom:10%;right:-80px;animation:auraIn 2s forwards .5s,auraFloat2 22s ease-in-out infinite 2.5s;opacity:0;}
+@keyframes auraIn{from{opacity:0;}to{opacity:1;}}
+@keyframes auraFloat1{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(40px,-30px) scale(1.06);}66%{transform:translate(-20px,20px) scale(.96);}}
+@keyframes auraFloat2{0%,100%{transform:translate(0,0) scale(1);}40%{transform:translate(-30px,25px) scale(1.08);}70%{transform:translate(20px,-15px) scale(.94);}}
+
+body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.048'/%3E%3C/svg%3E");opacity:.55;}
+body::after{content:'';position:fixed;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.022) 2px,rgba(0,0,0,.022) 4px);}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:30px 56px;}
+nav::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,10,10,.98) 0%,transparent 100%);pointer-events:none;}
+.nav-logo{font-family:var(--mono);font-size:11px;color:var(--slate3);letter-spacing:.14em;text-decoration:none;text-transform:uppercase;position:relative;z-index:1;}
+.nav-back{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;position:relative;z-index:1;display:flex;align-items:center;gap:10px;transition:color .25s;}
+.nav-back:hover{color:var(--alabaster);}
+.back-arrow{display:inline-block;transition:transform .25s;}
+.nav-back:hover .back-arrow{transform:translateX(-4px);}
+
+/* HERO */
+.proj-hero{min-height:88vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 56px 88px;position:relative;z-index:3;overflow:hidden;}
+.proj-ghost-num{position:absolute;right:40px;bottom:20px;font-size:clamp(180px,24vw,340px);font-weight:700;letter-spacing:-.06em;line-height:1;color:transparent;-webkit-text-stroke:1px rgba(83,104,120,.07);pointer-events:none;user-select:none;}
+.proj-hero-eyebrow{font-family:var(--mono);font-size:10px;color:var(--slate3);letter-spacing:.18em;text-transform:uppercase;margin-bottom:28px;display:flex;align-items:center;gap:14px;opacity:0;animation:fadeUp 1s forwards .15s;}
+.proj-hero-eyebrow::before{content:'';width:24px;height:1px;background:var(--slate);}
+.proj-hero-title{font-size:clamp(56px,8.5vw,118px);font-weight:700;line-height:.88;letter-spacing:-.04em;margin-bottom:44px;opacity:0;animation:fadeUp 1s forwards .3s;max-width:900px;}
+.proj-hero-title .sl{-webkit-text-fill-color:transparent;background:linear-gradient(160deg,var(--alabaster) 0%,var(--alaba2) 28%,var(--slate3) 50%,var(--alaba2) 72%,var(--alabaster) 100%);-webkit-background-clip:text;background-clip:text;background-size:200% 200%;animation:chromeShift 6s ease-in-out infinite;}
+@keyframes chromeShift{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+.proj-hero-tags{display:flex;gap:8px;flex-wrap:wrap;opacity:0;animation:fadeUp 1s forwards .45s;}
+.hero-tag{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border:1px solid var(--border2);border-radius:1px;color:var(--slate3);}
+
+/* COVER BANNER */
+.cover-banner{position:relative;z-index:3;width:100%;height:560px;background:var(--onyx2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.cover-banner img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(20%) contrast(1.06) brightness(.9);}
+.cover-banner::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(83,104,120,.15) 0%,transparent 50%,rgba(10,10,10,.4) 100%);pointer-events:none;z-index:1;}
+.img-ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;width:100%;height:100%;}
+.img-ph-ring{width:56px;height:56px;border:1px solid var(--border2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:22px;font-family:var(--mono);}
+.img-ph-label{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;}
+.img-ph-sub{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.1em;opacity:.45;}
+
+/* CONTENT */
+.proj-content{padding:120px 56px;display:grid;grid-template-columns:1fr 1fr;gap:96px;position:relative;z-index:3;align-items:start;}
+.content-label{font-family:var(--mono);font-size:10px;color:var(--slate3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:28px;display:flex;align-items:center;gap:14px;}
+.content-label::before{content:'';width:20px;height:1px;background:var(--border2);}
+.content-h{font-size:clamp(28px,3.2vw,46px);font-weight:700;letter-spacing:-.03em;line-height:1.08;margin-bottom:32px;}
+.content-p{font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:18px;}
+.proj-meta-list{margin-top:52px;display:flex;flex-direction:column;border-top:1px solid var(--border);}
+.proj-meta-item{display:flex;justify-content:space-between;align-items:baseline;padding:18px 0;border-bottom:1px solid var(--border);}
+.meta-k{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+.meta-v{font-family:var(--mono);font-size:12px;color:var(--alabaster);}
+
+/* IMAGE SLOTS */
+.img-slots{display:flex;flex-direction:column;gap:16px;}
+.img-slot{width:100%;background:var(--onyx2);border:1px solid var(--border);border-radius:2px;overflow:hidden;position:relative;}
+.img-slot.tall{aspect-ratio:4/3;}
+.img-slot.short{aspect-ratio:16/9;}
+.img-slot img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(20%) contrast(1.05) brightness(.92);mix-blend-mode:luminosity;}
+.slot-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:220px;}
+.slot-ph-cross{width:28px;height:28px;position:relative;}
+.slot-ph-cross::before,.slot-ph-cross::after{content:'';position:absolute;background:var(--border2);}
+.slot-ph-cross::before{width:1px;height:100%;left:50%;top:0;}
+.slot-ph-cross::after{width:100%;height:1px;top:50%;left:0;}
+.slot-ph-txt{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;opacity:.45;}
+
+/* GALLERY */
+.gallery-strip{padding:0 56px 120px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;position:relative;z-index:3;}
+.gallery-strip .img-slot{aspect-ratio:3/2;}
+
+.divider{height:1px;background:var(--border);position:relative;z-index:3;margin:0 56px;}
+
+footer{padding:36px 56px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:relative;z-index:3;}
+.f-l{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em;}
+.f-r{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em;display:flex;align-items:center;gap:10px;}
+.pulse{width:5px;height:5px;background:var(--slate3);border-radius:50%;animation:pulseA 2.5s ease-in-out infinite;}
+@keyframes pulseA{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.25;transform:scale(.5);}}
+
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1);}
+.reveal.fl{transform:translateX(-48px);}
+.reveal.fr{transform:translateX(48px);}
+.reveal.vis{opacity:1;transform:none;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(34px);}to{opacity:1;transform:translateY(0);}}
+
+@media(max-width:900px){
+  nav{padding:22px 28px;}
+  .proj-hero{padding:120px 28px 64px;}
+  .proj-ghost-num{font-size:120px;}
+  .proj-content{grid-template-columns:1fr;gap:52px;padding:80px 28px;}
+  .gallery-strip{grid-template-columns:1fr 1fr;padding:0 28px 80px;}
+  .cover-banner{height:300px;}
+  footer{flex-direction:column;gap:12px;padding:28px;}
+  .divider{margin:0 28px;}
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-trail"></div>
+<div class="aura aura-1"></div>
+<div class="aura aura-2"></div>
+
+<nav>
+  <a href="Portfolio.html" class="nav-back"><span class="back-arrow">←</span> Portfolio</a>
+  <a href="Portfolio.html" class="nav-logo">YG — 2026</a>
+</nav>
+
+<section class="proj-hero">
+  <div class="proj-ghost-num">003</div>
+  <div class="proj-hero-eyebrow">Orador · AI Education · Janeiro 2026 · EEG / UMinho</div>
+  <h1 class="proj-hero-title">AI Productivity<br><span class="sl">Workshop.</span></h1>
+  <div class="proj-hero-tags">
+    <span class="hero-tag">Orador</span>
+    <span class="hero-tag">Claude</span>
+    <span class="hero-tag">ChatGPT</span>
+    <span class="hero-tag">Education</span>
+  </div>
+</section>
+
+<div class="cover-banner">
+  <!-- Add cover: <img src="workshop-cover.jpg" alt="AI Workshop at EEG"> -->
+  <div class="img-ph">
+    <div class="img-ph-ring">+</div>
+    <span class="img-ph-label">Cover image</span>
+    <span class="img-ph-sub">1600 × 900 recommended</span>
+  </div>
+</div>
+
+<section class="proj-content">
+  <div class="reveal fl">
+    <div class="content-label">Overview</div>
+    <h2 class="content-h">IA generativa aplicada<br>ao mundo dos negócios.</h2>
+    <p class="content-p">Atuei como orador no auditório principal da Escola de Economia e Gestão da Universidade do Minho — um dos maiores eventos de IA liderados por estudantes na universidade, com 110+ participantes entre presença física e livestream.</p>
+    <p class="content-p">O curriculum cobriu IA generativa, agentes governados e aplicações práticas de IA em contextos de negócio: uso de Claude e ChatGPT, construção de agentes e automações, e como integrar estas ferramentas em processos reais de gestão e operações.</p>
+    <p class="content-p">Coordenei todos os aspectos do evento — reserva do auditório, divulgação, gestão do livestream e follow-up pós-evento.</p>
+    <div class="proj-meta-list">
+      <div class="proj-meta-item"><span class="meta-k">Papel</span><span class="meta-v">Orador / Palestrante</span></div>
+      <div class="proj-meta-item"><span class="meta-k">Data</span><span class="meta-v">Janeiro 2026</span></div>
+      <div class="proj-meta-item"><span class="meta-k">Alcance</span><span class="meta-v">110+ participantes</span></div>
+      <div class="proj-meta-item"><span class="meta-k">Formato</span><span class="meta-v">Presencial + Livestream</span></div>
+      <div class="proj-meta-item"><span class="meta-k">Local</span><span class="meta-v">Auditório EEG, UMinho</span></div>
+    </div>
+  </div>
+
+  <div class="img-slots reveal fr">
+    <div class="img-slot tall">
+      <!-- <img src="workshop-1.jpg" alt="Workshop session"> -->
+      <div class="slot-ph">
+        <div class="slot-ph-cross"></div>
+        <span class="slot-ph-txt">Image · 4:3</span>
+      </div>
+    </div>
+    <div class="img-slot short">
+      <!-- <img src="workshop-2.jpg" alt="Audience"> -->
+      <div class="slot-ph">
+        <div class="slot-ph-cross"></div>
+        <span class="slot-ph-txt">Image · 16:9</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<div class="gallery-strip">
+  <div class="img-slot reveal">
+    <!-- <img src="g1.jpg" alt=""> -->
+    <div class="slot-ph"><div class="slot-ph-cross"></div><span class="slot-ph-txt">Gallery</span></div>
+  </div>
+  <div class="img-slot reveal">
+    <!-- <img src="g2.jpg" alt=""> -->
+    <div class="slot-ph"><div class="slot-ph-cross"></div><span class="slot-ph-txt">Gallery</span></div>
+  </div>
+  <div class="img-slot reveal">
+    <!-- <img src="g3.jpg" alt=""> -->
+    <div class="slot-ph"><div class="slot-ph-cross"></div><span class="slot-ph-txt">Gallery</span></div>
+  </div>
+</div>
+
+<footer>
+  <span class="f-l">© 2026 Yuri Guedes</span>
+  <div class="f-r"><div class="pulse"></div>AI Productivity Workshop · 2026</div>
+</footer>
+
+<script>
+const cur=document.getElementById('cur'),trail=document.getElementById('cur-trail');
+let mx=0,my=0,tx=0,ty=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function animT(){tx+=(mx-tx)*.1;ty+=(my-ty)*.1;trail.style.left=tx+'px';trail.style.top=ty+'px';requestAnimationFrame(animT);})();
+document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>cur.classList.add('big'));el.addEventListener('mouseleave',()=>cur.classList.remove('big'));});
+const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target);}});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+const auras=document.querySelectorAll('.aura');
+let bx=window.innerWidth/2,by=window.innerHeight/2;
+document.addEventListener('mousemove',e=>{bx=e.clientX;by=e.clientY;});
+(function animA(){auras[0].style.transform=`translate(${(bx-window.innerWidth/2)*.018}px,${(by-window.innerHeight/2)*.018}px)`;if(auras[1])auras[1].style.transform=`translate(${(bx-window.innerWidth/2)*-.012}px,${(by-window.innerHeight/2)*-.012}px)`;requestAnimationFrame(animA);})();
+</script>
+</body>
+</html>

@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yuri Guedes</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── ALTE HAAS GROTESK via CDN ── */
+@import url('https://fonts.cdnfonts.com/css/alte-haas-grotesk');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --onyx:     #0A0A0A;
+  --onyx2:    #0f0f0f;
+  --onyx3:    #141414;
+  --slate:    #536878;
+  --slate2:   #3d5060;
+  --slate3:   #6a8090;
+  --alabaster:#E5E4E2;
+  --alaba2:   #c8c7c5;
+  --muted:    #4a5a64;
+  --faint:    rgba(83,104,120,0.12);
+  --border:   rgba(83,104,120,0.14);
+  --border2:  rgba(83,104,120,0.28);
+  --font:     'Alte Haas Grotesk', 'Arial Black', sans-serif;
+  --mono:     'DM Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--onyx);
+  color: var(--alabaster);
+  font-family: var(--font);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── CURSOR ── */
+#cur {
+  width: 8px; height: 8px;
+  background: var(--alabaster);
+  border-radius: 50%;
+  position: fixed; pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width .2s, height .2s, background .2s, opacity .2s;
+  mix-blend-mode: difference;
+}
+#cur.big { width: 52px; height: 52px; opacity: .5; }
+#cur-trail {
+  width: 52px; height: 52px;
+  border: 1px solid rgba(83,104,120,.3);
+  border-radius: 50%;
+  position: fixed; pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+}
+
+/* ── AURA BLOBS ── */
+.aura {
+  position: fixed; border-radius: 50%;
+  pointer-events: none; z-index: 0;
+  filter: blur(90px);
+  opacity: 0;
+  animation: auraIn 2s forwards;
+}
+.aura-1 {
+  width: 700px; height: 700px;
+  background: radial-gradient(circle at center, rgba(83,104,120,.38) 0%, rgba(40,60,75,.18) 45%, transparent 70%);
+  top: -200px; left: -150px;
+  animation-delay: .2s;
+  animation: auraIn 2s forwards .2s, auraFloat1 18s ease-in-out infinite 2.2s;
+}
+.aura-2 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle at center, rgba(83,104,120,.28) 0%, rgba(30,45,58,.12) 50%, transparent 70%);
+  bottom: 10%; right: -80px;
+  animation: auraIn 2s forwards .5s, auraFloat2 22s ease-in-out infinite 2.5s;
+}
+.aura-3 {
+  width: 350px; height: 350px;
+  background: radial-gradient(circle at center, rgba(100,130,150,.2) 0%, transparent 65%);
+  top: 45%; left: 30%;
+  animation: auraIn 2s forwards .8s, auraFloat3 26s ease-in-out infinite 2.8s;
+}
+@keyframes auraIn { from { opacity:0; } to { opacity:1; } }
+@keyframes auraFloat1 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33%     { transform: translate(40px,-30px) scale(1.06); }
+  66%     { transform: translate(-20px,20px) scale(.96); }
+}
+@keyframes auraFloat2 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  40%     { transform: translate(-30px,25px) scale(1.08); }
+  70%     { transform: translate(20px,-15px) scale(.94); }
+}
+@keyframes auraFloat3 {
+  0%,100% { transform: translate(0,0); }
+  50%     { transform: translate(30px,-40px); }
+}
+
+/* ── GRAIN ── */
+body::before {
+  content:''; position:fixed; inset:0; z-index:1; pointer-events:none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.048'/%3E%3C/svg%3E");
+  opacity: .55;
+}
+
+/* ── SCAN LINES ── */
+body::after {
+  content:''; position:fixed; inset:0; z-index:2; pointer-events:none;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.022) 2px, rgba(0,0,0,.022) 4px);
+}
+
+/* ── NAV ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:30px 56px;
+}
+nav::before {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(to bottom, rgba(10,10,10,.98) 0%, transparent 100%);
+  pointer-events:none;
+}
+.nav-logo {
+  font-family: var(--mono);
+  font-size:11px; color:var(--slate3); letter-spacing:.14em;
+  text-decoration:none; text-transform:uppercase; position:relative; z-index:1;
+}
+.nav-links { display:flex; gap:44px; list-style:none; position:relative; z-index:1; }
+.nav-links a {
+  font-family: var(--mono);
+  font-size:10px; color:var(--muted); text-decoration:none;
+  letter-spacing:.12em; text-transform:uppercase; transition:color .25s; position:relative;
+}
+.nav-links a::after {
+  content:''; position:absolute; bottom:-3px; left:0;
+  width:0; height:1px; background:var(--slate3); transition:width .3s;
+}
+.nav-links a:hover { color:var(--alabaster); }
+.nav-links a:hover::after { width:100%; }
+
+/* ── HERO ── */
+.hero {
+  min-height:100vh;
+  display:grid;
+  grid-template-columns: 1fr 400px;
+  align-items:end;
+  padding:0 56px 88px;
+  position:relative; z-index:3;
+  gap:72px;
+}
+.hero-left { display:flex; flex-direction:column; justify-content:flex-end; }
+
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size:10px; color:var(--slate3); letter-spacing:.18em; text-transform:uppercase;
+  margin-bottom:32px; display:flex; align-items:center; gap:14px;
+  opacity:0; animation:fadeUp 1s forwards .15s;
+}
+.hero-eyebrow::before { content:''; width:24px; height:1px; background:var(--slate); }
+
+/* HERO NAME — chrome text effect */
+.hero-name {
+  font-family: var(--font);
+  font-size: clamp(80px, 11.5vw, 162px);
+  font-weight: 700;
+  line-height: .86;
+  letter-spacing: -.04em;
+  margin-bottom: 52px;
+  opacity:0; animation:fadeUp 1s forwards .3s;
+  position:relative;
+}
+.hero-name .word {
+  display:block;
+  position:relative;
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(
+    160deg,
+    var(--alabaster) 0%,
+    var(--alaba2) 28%,
+    var(--slate3) 50%,
+    var(--alaba2) 72%,
+    var(--alabaster) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-size: 200% 200%;
+  animation: chromeShift 6s ease-in-out infinite;
+}
+.hero-name .word.w2 {
+  color:var(--slate3);
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(
+    160deg,
+    var(--slate3) 0%,
+    var(--alabaster) 40%,
+    var(--slate3) 70%,
+    var(--slate) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-size: 200% 200%;
+  animation: chromeShift 6s ease-in-out infinite .8s;
+}
+@keyframes chromeShift {
+  0%,100% { background-position: 0% 50%; }
+  50%     { background-position: 100% 50%; }
+}
+
+.hero-bottom {
+  display:flex; justify-content:space-between; align-items:flex-end; gap:40px;
+  opacity:0; animation:fadeUp 1s forwards .5s;
+}
+.hero-desc {
+  font-family: var(--mono);
+  font-size:12px; color:var(--muted); line-height:1.8; max-width:320px;
+}
+.hero-scroll {
+  font-family: var(--mono);
+  font-size:10px; color:var(--muted); letter-spacing:.12em; text-transform:uppercase;
+  display:flex; flex-direction:column; align-items:center; gap:10px; flex-shrink:0;
+}
+.scroll-track { width:1px; height:52px; background:var(--faint); position:relative; overflow:hidden; }
+.scroll-track::after {
+  content:''; position:absolute; top:-50%; left:0; width:1px; height:50%;
+  background: linear-gradient(to bottom, transparent, var(--slate3));
+  animation:scrollDown 2.4s ease-in-out infinite;
+}
+@keyframes scrollDown { 0%{top:-50%;} 100%{top:150%;} }
+
+/* ── PHOTO SLOT ── */
+.hero-photo {
+  position:relative; align-self:end;
+  opacity:0; animation:fadeUp 1s forwards .4s;
+}
+.photo-frame {
+  width:100%; aspect-ratio:3/4;
+  background:var(--onyx3);
+  border:1px solid var(--border2);
+  border-radius:2px;
+  overflow:hidden; position:relative;
+}
+.photo-frame img {
+  width:100%; height:100%; object-fit:cover; display:block;
+  filter: grayscale(30%) contrast(1.08) brightness(.92);
+  mix-blend-mode: luminosity;
+}
+/* chrome/slate tint */
+.photo-frame::before {
+  content:''; position:absolute; inset:0; z-index:1;
+  background: linear-gradient(
+    160deg,
+    rgba(83,104,120,.22) 0%,
+    transparent 50%,
+    rgba(10,10,10,.55) 100%
+  );
+  pointer-events:none;
+}
+/* aura behind photo */
+.photo-aura {
+  position:absolute;
+  width:280px; height:280px;
+  background: radial-gradient(circle, rgba(83,104,120,.35) 0%, transparent 70%);
+  filter:blur(60px);
+  bottom:-40px; left:50%; transform:translateX(-50%);
+  z-index:-1;
+  animation:auraFloat2 10s ease-in-out infinite;
+}
+.photo-placeholder {
+  width:100%; height:100%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:14px; color:var(--muted);
+}
+.photo-placeholder svg { width:36px; height:36px; opacity:.25; }
+.photo-placeholder span {
+  font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; opacity:.25;
+}
+
+/* corner ornaments */
+.photo-corner {
+  position:absolute; width:18px; height:18px;
+  border-color:var(--slate); border-style:solid; z-index:2; pointer-events:none;
+}
+.pc-tl { top:-5px; left:-5px; border-width:1px 0 0 1px; }
+.pc-br { bottom:-5px; right:-5px; border-width:0 1px 1px 0; }
+
+.photo-label {
+  font-family:var(--mono); font-size:10px; color:var(--muted);
+  letter-spacing:.1em; text-transform:uppercase;
+  margin-top:14px; text-align:right;
+}
+
+/* ── MARQUEE ── */
+.marquee-wrap {
+  overflow:hidden; position:relative; z-index:3;
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  padding:16px 0;
+  background:rgba(10,10,10,.9);
+}
+.marquee-track { display:flex; width:max-content; animation:marquee 32s linear infinite; }
+.mitem {
+  font-family:var(--mono); font-size:10px; color:var(--muted);
+  letter-spacing:.12em; text-transform:uppercase;
+  padding:0 40px; display:flex; align-items:center; gap:40px; white-space:nowrap;
+}
+.mdot { width:3px; height:3px; background:var(--slate); border-radius:50%; flex-shrink:0; }
+@keyframes marquee { from{transform:translateX(0);} to{transform:translateX(-50%);} }
+
+/* ── SECTIONS ── */
+.sec { position:relative; z-index:3; padding:140px 56px; }
+.sec-head {
+  display:flex; align-items:center; gap:18px;
+  margin-bottom:80px;
+  font-family:var(--mono); font-size:10px; color:var(--muted);
+  letter-spacing:.14em; text-transform:uppercase;
+}
+.sec-head::before { content:''; width:28px; height:1px; background:var(--border2); }
+.sec-num { color:var(--slate); }
+
+/* ── ABOUT ── */
+.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:96px; align-items:start; }
+.about-h {
+  font-size:clamp(38px,4.8vw,64px); font-weight:700;
+  line-height:1.08; letter-spacing:-.03em;
+}
+.about-h .sl { color:var(--slate3); }
+.about-p {
+  font-family:var(--mono); font-size:12px; color:var(--muted);
+  line-height:1.9; margin-bottom:20px;
+}
+.stats {
+  display:grid; grid-template-columns:1fr 1fr; gap:1px;
+  margin-top:56px; background:var(--border); border:1px solid var(--border);
+}
+.stat {
+  background:var(--onyx2); padding:28px 26px;
+  position:relative; overflow:hidden; transition:background .3s;
+}
+.stat::after {
+  content:''; position:absolute; top:0; left:0; right:0;
+  height:1px; background:linear-gradient(to right, transparent, var(--slate), transparent);
+  transform:scaleX(0); transition:transform .5s ease;
+}
+.stat:hover { background:var(--onyx3); }
+.stat:hover::after { transform:scaleX(1); }
+.stat-n {
+  font-size:44px; font-weight:700; letter-spacing:-.04em; line-height:1;
+  margin-bottom:6px;
+  background:linear-gradient(135deg, var(--alabaster), var(--alaba2));
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+}
+.stat-l { font-family:var(--mono); font-size:10px; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; }
+
+/* ── PROJECTS ── */
+.projs { display:flex; flex-direction:column; gap:2px; }
+.proj {
+  background:var(--onyx2); border:1px solid var(--border); border-radius:2px;
+  padding:56px; display:grid; grid-template-columns:1fr 200px;
+  gap:48px; align-items:start; position:relative; overflow:hidden;
+  transition:border-color .3s, background .3s; cursor:none;
+  text-decoration:none; color:inherit;
+}
+.proj::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(83,104,120,.06) 0%, transparent 55%);
+  opacity:0; transition:opacity .4s;
+}
+.proj:hover { border-color:var(--border2); background:var(--onyx3); }
+.proj:hover::before { opacity:1; }
+.proj-bar {
+  position:absolute; left:0; top:0; bottom:0; width:2px;
+  background:linear-gradient(to bottom, var(--slate3), transparent);
+  transform:scaleY(0); transform-origin:top;
+  transition:transform .55s cubic-bezier(.16,1,.3,1);
+}
+.proj:hover .proj-bar { transform:scaleY(1); }
+
+/* Aura on hover — JS adds class */
+.proj-aura {
+  position:absolute; width:300px; height:300px;
+  background:radial-gradient(circle, rgba(83,104,120,.18) 0%, transparent 70%);
+  filter:blur(60px); border-radius:50%;
+  pointer-events:none;
+  opacity:0; transition:opacity .5s;
+  transform:translate(-50%,-50%);
+  top:50%; left:30%;
+}
+.proj:hover .proj-aura { opacity:1; }
+
+.proj-idx { font-family:var(--mono); font-size:10px; color:var(--muted); letter-spacing:.1em; margin-bottom:20px; }
+.proj-title { font-size:clamp(22px,2.8vw,36px); font-weight:700; letter-spacing:-.025em; line-height:1.1; margin-bottom:20px; }
+.proj-desc { font-family:var(--mono); font-size:12px; color:var(--muted); line-height:1.8; max-width:500px; }
+.proj-right { display:flex; flex-direction:column; align-items:flex-end; gap:16px; padding-top:4px; }
+.proj-yr { font-family:var(--mono); font-size:11px; color:var(--muted); }
+.proj-tags { display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-end; }
+.tag {
+  font-family:var(--mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase;
+  padding:5px 10px; border:1px solid var(--border); border-radius:1px; color:var(--muted);
+  transition:border-color .2s, color .2s;
+}
+.proj:hover .tag { border-color:var(--border2); color:var(--slate3); }
+.proj-arrow {
+  position:absolute; bottom:48px; right:48px;
+  width:36px; height:36px; border:1px solid var(--border);
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:15px; color:var(--muted); transition:all .3s;
+}
+.proj:hover .proj-arrow { border-color:var(--slate); color:var(--slate3); transform:rotate(45deg); }
+
+/* ── SKILLS ── */
+.skills-sec { background:var(--onyx2); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+.skill-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
+.skill-col {
+  background:var(--onyx); border:1px solid var(--border); padding:48px 44px;
+  position:relative; overflow:hidden;
+}
+.skill-col::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at top left, rgba(83,104,120,.07) 0%, transparent 60%);
+  opacity:0; transition:opacity .5s;
+}
+.skill-col:hover::before { opacity:1; }
+.skill-col-t { font-family:var(--mono); font-size:10px; color:var(--slate3); letter-spacing:.14em; text-transform:uppercase; margin-bottom:30px; }
+.skill-list { list-style:none; display:flex; flex-direction:column; gap:14px; }
+.skill-list li {
+  font-family:var(--mono); font-size:12px; color:var(--muted);
+  display:flex; align-items:center; gap:10px; transition:color .2s;
+}
+.skill-list li::before { content:''; width:4px; height:1px; background:var(--border2); flex-shrink:0; transition:width .2s, background .2s; }
+.skill-list li:hover { color:var(--alabaster); }
+.skill-list li:hover::before { width:10px; background:var(--slate3); }
+
+/* ── CONTACT ── */
+.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:96px; align-items:center; }
+.contact-h { font-size:clamp(48px,5.8vw,84px); font-weight:700; letter-spacing:-.04em; line-height:1; }
+.contact-h .sl { color:var(--slate3); display:block; }
+.clinks { display:flex; flex-direction:column; gap:14px; }
+.clink {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:26px 32px; border:1px solid var(--border); border-radius:2px;
+  background:var(--onyx2); text-decoration:none; color:var(--alabaster);
+  transition:all .25s; position:relative; overflow:hidden;
+}
+.clink::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:0; background:var(--slate2); transition:width .3s ease;
+}
+.clink:hover { border-color:var(--border2); transform:translateX(5px); }
+.clink:hover::before { width:2px; }
+.clink-l { font-family:var(--mono); font-size:10px; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; margin-bottom:4px; }
+.clink-v { font-size:14px; font-weight:700; letter-spacing:-.01em; }
+.clink-a { font-size:17px; color:var(--muted); transition:color .2s, transform .2s; }
+.clink:hover .clink-a { color:var(--slate3); transform:translateX(4px); }
+
+/* ── FOOTER ── */
+footer {
+  padding:36px 56px; border-top:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center;
+  position:relative; z-index:3;
+}
+.f-l { font-family:var(--mono); font-size:10px; color:var(--muted); letter-spacing:.08em; }
+.f-r { font-family:var(--mono); font-size:10px; color:var(--muted); letter-spacing:.08em; display:flex; align-items:center; gap:10px; }
+.pulse { width:5px; height:5px; background:var(--slate3); border-radius:50%; animation:pulseA 2.5s ease-in-out infinite; }
+@keyframes pulseA { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.25;transform:scale(.5);} }
+
+.divider { height:1px; background:var(--border); position:relative; z-index:3; margin:0 56px; }
+
+/* ── SCROLL ANIMATIONS ── */
+.reveal {
+  opacity:0; transform:translateY(40px);
+  transition:opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1);
+}
+.reveal.fl { transform:translateX(-48px); }
+.reveal.fr { transform:translateX(48px); }
+.reveal.vis { opacity:1; transform:none; }
+
+.stagger > * {
+  opacity:0; transform:translateY(30px);
+  transition:opacity .75s cubic-bezier(.16,1,.3,1), transform .75s cubic-bezier(.16,1,.3,1);
+}
+.stagger.vis > *:nth-child(1) { transition-delay:.04s; opacity:1; transform:none; }
+.stagger.vis > *:nth-child(2) { transition-delay:.12s; opacity:1; transform:none; }
+.stagger.vis > *:nth-child(3) { transition-delay:.20s; opacity:1; transform:none; }
+.stagger.vis > *:nth-child(4) { transition-delay:.28s; opacity:1; transform:none; }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(34px);} to{opacity:1;transform:translateY(0);} }
+
+/* ── MOBILE ── */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;padding:120px 28px 64px;}
+  .hero-photo{display:none;}
+  .about-grid,.contact-grid{grid-template-columns:1fr;gap:52px;}
+  .skill-grid{grid-template-columns:1fr;}
+  .proj{grid-template-columns:1fr;padding:32px;}
+  .proj-right{align-items:flex-start;}
+  .proj-tags{justify-content:flex-start;}
+  nav{padding:22px 28px;}
+  .sec{padding:88px 28px;}
+  footer{flex-direction:column;gap:12px;padding:28px;}
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-trail"></div>
+
+<div class="aura aura-1"></div>
+<div class="aura aura-2"></div>
+<div class="aura aura-3"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">YG — 2026</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Work</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Available for opportunities · Braga, Portugal</div>
+    <h1 class="hero-name" id="heroN">
+      <span class="word w1">YURI</span>
+      <span class="word w2">GUEDES</span>
+    </h1>
+    <div class="hero-bottom">
+      <p class="hero-desc">Management student. Builder. I connect business strategy with modern technology — AI, e-commerce, and tools that create real impact.</p>
+      <div class="hero-scroll">
+        <div class="scroll-track"></div>
+        scroll
+      </div>
+    </div>
+  </div>
+  <div class="hero-photo">
+    <div class="photo-aura"></div>
+    <div class="photo-corner pc-tl"></div>
+    <div class="photo-corner pc-br"></div>
+    <div class="photo-frame">
+      <img src="Profile picture.png" alt="Yuri Guedes">
+    </div>
+    <div class="photo-label">Yuri Guedes · 2026</div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="mitem">AI Workshop<span class="mdot"></span></div>
+    <div class="mitem">VTEX<span class="mdot"></span></div>
+    <div class="mitem">Next.js 14<span class="mdot"></span></div>
+    <div class="mitem">Supabase<span class="mdot"></span></div>
+    <div class="mitem">Shopify<span class="mdot"></span></div>
+    <div class="mitem">Power BI<span class="mdot"></span></div>
+    <div class="mitem">Claude Code<span class="mdot"></span></div>
+    <div class="mitem">SQL<span class="mdot"></span></div>
+    <div class="mitem">Vercel<span class="mdot"></span></div>
+    <div class="mitem">Digital Transformation<span class="mdot"></span></div>
+    <div class="mitem">AI Workshop<span class="mdot"></span></div>
+    <div class="mitem">VTEX<span class="mdot"></span></div>
+    <div class="mitem">Next.js 14<span class="mdot"></span></div>
+    <div class="mitem">Supabase<span class="mdot"></span></div>
+    <div class="mitem">Shopify<span class="mdot"></span></div>
+    <div class="mitem">Power BI<span class="mdot"></span></div>
+    <div class="mitem">Claude Code<span class="mdot"></span></div>
+    <div class="mitem">SQL<span class="mdot"></span></div>
+    <div class="mitem">Vercel<span class="mdot"></span></div>
+    <div class="mitem">Digital Transformation<span class="mdot"></span></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="sec" id="about">
+  <div class="sec-head reveal"><span class="sec-num">01 /</span> About</div>
+  <div class="about-grid">
+    <div class="reveal fl">
+      <h2 class="about-h">Bridging<br>business &<br><span class="sl">technology.</span></h2>
+    </div>
+    <div class="reveal fr">
+      <p class="about-p">I'm a management student at Universidade do Minho (Licenciatura em Gestão, 2025–2028) with a strong focus on technology applications in business. I work as a consultant at Two7 Consultoria alongside real clients in e-commerce and retail, and I lead initiatives that bring AI literacy and modern tools to students and businesses.</p>
+      <p class="about-p">I build things. From seller performance dashboards to AI workshops to internal coordination tools — my work sits at the intersection of management thinking and technical execution.</p>
+      <div class="stats stagger">
+        <div class="stat"><div class="stat-n">110+</div><div class="stat-l">Workshop attendees</div></div>
+        <div class="stat"><div class="stat-n">30+</div><div class="stat-l">Business partnerships</div></div>
+        <div class="stat"><div class="stat-n">3</div><div class="stat-l">Active projects</div></div>
+        <div class="stat"><div class="stat-n">2025</div><div class="stat-l">Started consulting</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROJECTS -->
+<section class="sec" id="projects">
+  <div class="sec-head reveal"><span class="sec-num">02 /</span> Selected Work</div>
+  <div class="projs">
+
+    <a href="project-ace-tool.html" class="proj reveal">
+      <div class="proj-bar"></div>
+      <div class="proj-aura"></div>
+      <div>
+        <div class="proj-idx">— 001 · Agência Júnior · ACE / UMinho</div>
+        <h3 class="proj-title">External Relations<br>Member</h3>
+        <p class="proj-desc">Departamento responsável por idealizar eventos, fazer prospecção e contacto com empresas, organizar logística e coordenar execução — conectando profissionais e alunos da Universidade do Minho. Construí também uma ferramenta interna para resolver um gap operacional no fluxo do departamento.</p>
+      </div>
+      <div class="proj-right">
+        <span class="proj-yr">2025 → Now</span>
+        <div class="proj-tags">
+          <span class="tag">Events</span><span class="tag">Outreach</span><span class="tag">Internal Tool</span>
+        </div>
+      </div>
+      <div class="proj-arrow">↗</div>
+    </a>
+
+    <a href="project-sales-assistant.html" class="proj reveal">
+      <div class="proj-bar"></div>
+      <div class="proj-aura"></div>
+      <div>
+        <div class="proj-idx">— 002 · Consultoria · Two7 Consultoria</div>
+        <h3 class="proj-title">Developer</h3>
+        <p class="proj-desc">Trabalho como Developer nas operações da Two7 — consultoria brasileira de e-commerce com foco em VTEX e Shopify. Desenvolvo desde sites institucionais e landing pages a produtos internos e dashboards de performance de sellers integrados com VTEX.</p>
+      </div>
+      <div class="proj-right">
+        <span class="proj-yr">2024 → Now</span>
+        <div class="proj-tags">
+          <span class="tag">VTEX</span><span class="tag">Next.js 14</span><span class="tag">Supabase</span>
+        </div>
+      </div>
+      <div class="proj-arrow">↗</div>
+    </a>
+
+    <a href="project-ai-workshop.html" class="proj reveal">
+      <div class="proj-bar"></div>
+      <div class="proj-aura"></div>
+      <div>
+        <div class="proj-idx">— 003 · AI Education · EEG / UMinho · Janeiro 2026</div>
+        <h3 class="proj-title">AI Productivity<br>Workshop</h3>
+        <p class="proj-desc">Orador no auditório principal da Escola de Economia e Gestão. Curriculum sobre IA generativa, agentes governados e aplicações práticas de IA em negócios. 110+ participantes presenciais e via livestream — um dos maiores eventos de IA liderados por estudantes na universidade.</p>
+      </div>
+      <div class="proj-right">
+        <span class="proj-yr">Jan 2026</span>
+        <div class="proj-tags">
+          <span class="tag">Claude</span><span class="tag">ChatGPT</span><span class="tag">Education</span>
+        </div>
+      </div>
+      <div class="proj-arrow">↗</div>
+    </a>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<div class="skills-sec" id="skills">
+  <section class="sec" style="padding-top:100px;padding-bottom:100px;">
+    <div class="sec-head reveal"><span class="sec-num">03 /</span> Capabilities</div>
+    <div class="skill-grid stagger">
+      <div class="skill-col">
+        <div class="skill-col-t">E-commerce & Platforms</div>
+        <ul class="skill-list">
+          <li>VTEX</li><li>Shopify</li><li>Digital Transformation</li><li>E-commerce Strategy</li>
+        </ul>
+      </div>
+      <div class="skill-col">
+        <div class="skill-col-t">Development & Data</div>
+        <ul class="skill-list">
+          <li>Next.js / React</li><li>Supabase</li><li>SQL</li><li>Power BI</li><li>Claude Code / Vercel</li>
+        </ul>
+      </div>
+      <div class="skill-col">
+        <div class="skill-col-t">Strategy & Leadership</div>
+        <ul class="skill-list">
+          <li>Business Operations</li><li>Organisational Efficiency</li><li>AI in Business</li><li>Event Management</li><li>Client Management</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- CONTACT -->
+<section class="sec" id="contact">
+  <div class="sec-head reveal"><span class="sec-num">04 /</span> Contact</div>
+  <div class="contact-grid">
+    <div class="reveal fl">
+      <h2 class="contact-h">Let's build<span class="sl">something.</span></h2>
+    </div>
+    <div class="clinks reveal fr">
+      <a href="mailto:yurisguedes@gmail.com" class="clink">
+        <div><div class="clink-l">Email</div><div class="clink-v">yurisguedes@gmail.com</div></div>
+        <span class="clink-a">→</span>
+      </a>
+      <a href="tel:+351936322777" class="clink">
+        <div><div class="clink-l">Phone</div><div class="clink-v">+351 936 322 777</div></div>
+        <span class="clink-a">→</span>
+      </a>
+      <a href="#" class="clink">
+        <div><div class="clink-l">CV / Resume</div><div class="clink-v">Download PDF</div></div>
+        <span class="clink-a">↓</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="f-l">© 2026 Yuri Guedes</span>
+  <div class="f-r"><div class="pulse"></div>Available for internships & projects</div>
+</footer>
+
+<script>
+// CURSOR
+const cur = document.getElementById('cur');
+const trail = document.getElementById('cur-trail');
+let mx=0,my=0,tx=0,ty=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cur.style.left=mx+'px'; cur.style.top=my+'px';
+});
+(function animT(){
+  tx+=(mx-tx)*.1; ty+=(my-ty)*.1;
+  trail.style.left=tx+'px'; trail.style.top=ty+'px';
+  requestAnimationFrame(animT);
+})();
+document.querySelectorAll('a,.proj,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cur.classList.add('big'));
+  el.addEventListener('mouseleave',()=>cur.classList.remove('big'));
+});
+
+// SCROLL REVEAL
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('vis'); io.unobserve(e.target); } });
+},{threshold:.1});
+document.querySelectorAll('.reveal,.stagger').forEach(el=>io.observe(el));
+
+// PARALLAX HERO
+const heroN = document.getElementById('heroN');
+window.addEventListener('scroll',()=>{
+  if(heroN) heroN.style.transform=`translateY(${window.scrollY*.14}px)`;
+},{passive:true});
+
+// AURA MOUSE PARALLAX
+const auras = document.querySelectorAll('.aura');
+let bx=window.innerWidth/2, by=window.innerHeight/2;
+document.addEventListener('mousemove',e=>{ bx=e.clientX; by=e.clientY; });
+(function animA(){
+  auras[0].style.transform=`translate(${(bx-window.innerWidth/2)*.018}px,${(by-window.innerHeight/2)*.018}px)`;
+  auras[1].style.transform=`translate(${(bx-window.innerWidth/2)*-.012}px,${(by-window.innerHeight/2)*-.012}px)`;
+  requestAnimationFrame(animA);
+})();
+</script>
+</body>
+</html>
